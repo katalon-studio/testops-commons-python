@@ -2,7 +2,7 @@ from threading import RLock
 
 
 class ReportStorage:
-    __store: dict[str, object]
+    __store: dict
     __read_lock: RLock
     __write_lock: RLock
 

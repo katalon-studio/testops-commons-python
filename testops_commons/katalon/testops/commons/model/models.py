@@ -50,7 +50,7 @@ class TestResult:
     name: str = None
     suite_name: str = None
     description: str = None
-    parameters: dict[str, str] = {}
+    parameters: dict = {}
     status: str = None
     errors: list = []
     start: int = None
