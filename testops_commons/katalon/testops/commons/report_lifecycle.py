@@ -16,8 +16,8 @@ class ReportLifecycle:
     report_uploader: ReportUploader
     current_execution: str
     current_test_result: local
-    test_results: list[TestResult]
-    test_suites: list[TestSuite]
+    test_results: list
+    test_suites: list
 
     def __init__(self):
         config_creator: ConfigurationCreator = TestOpsConfigurationCreator()
@@ -39,10 +39,10 @@ class ReportLifecycle:
     def remove_current_test_result_uuid(self):
         self.current_test_result.current_test_result_uuid = None
 
-    def create_testcases(self, test_results: list[TestResult]) -> TestResults:
+    def create_testcases(self, test_results: list) -> TestResults:
         return TestResults(test_results)
 
-    def create_testsuites(self, test_suites: list[TestSuite]) -> TestSuites:
+    def create_testsuites(self, test_suites: list) -> TestSuites:
         return TestSuites(test_suites)
 
     def start_execution(self):
@@ -128,7 +128,7 @@ class ReportLifecycle:
         self.test_suites = None
 
 
-def get_execution_status(test_results: list[TestResult]) -> Status:
+def get_execution_status(test_results: list) -> Status:
     for result in test_results:
         if result.status == Status.FAILED.name:
             return Status.FAILED

@@ -9,13 +9,13 @@ def ensure_directory(directory: Path):
     directory.mkdir(parents=True, exist_ok=True)
 
 
-def scan_files(report_path: Path) -> list[str]:
+def scan_files(report_path: Path) -> list:
     paths = []
     __scan_dir(paths, report_path)
     return paths
 
 
-def __scan_dir(paths: list[str], directory: Path):
+def __scan_dir(paths: list, directory: Path):
     for (dir_path, dir_names, file_names) in walk(directory):
         for f in file_names:
             if __is_report_file(f):

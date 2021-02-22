@@ -15,11 +15,11 @@ class TestOpsConnector:
     def __init__(self, api_client: ApiClient):
         self.api_client = api_client
 
-    def get_upload_urls(self, project_id: int, num_of_urls: int) -> list[FileResource]:
+    def get_upload_urls(self, project_id: int, num_of_urls: int) -> list:
         fa: FileApi = FileApi(self.api_client)
         return fa.get_upload_urls(project_id, num_of_urls)
 
-    def upload_testops_report(self, body: list[UploadBatchFileResource], project_id: int, batch: str) -> None:
+    def upload_testops_report(self, body: list, project_id: int, batch: str) -> None:
         api: TestReportApi = TestReportApi(self.api_client)
         api.process_test_ops_reports(project_id, batch, body)
 

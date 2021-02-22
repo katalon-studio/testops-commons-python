@@ -57,10 +57,10 @@ class TestOpsReportUploader(ReportUploader):
             return
 
         report_path: Path = self.configuration.report_folder
-        files: list[str] = file_helper.scan_files(report_path)
-        file_resources: list[FileResource] = self.testops_connector.get_upload_urls(project_id, len(files))
+        files: list = file_helper.scan_files(report_path)
+        file_resources: list = self.testops_connector.get_upload_urls(project_id, len(files))
         bath: str = helper.generate_upload_batch()
-        uploaded: list[UploadBatchFileResource] = []
+        uploaded: list = []
         for i in range(0, len(files) - 1):
             is_end: bool = i == len(files) - 1
             rel = self.upload_file(file_resources[i], files[i], is_end)

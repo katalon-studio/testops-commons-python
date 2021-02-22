@@ -52,7 +52,7 @@ class TestResult:
     description: str = None
     parameters: dict[str, str] = {}
     status: str = None
-    errors: list[Error] = []
+    errors: list = []
     start: int = None
     stop: int = None
     duration: int = None
@@ -76,14 +76,14 @@ class Metadata:
 
 
 class TestSuites:
-    suites: list[TestSuite] = []
+    suites: list = []
 
-    def __init__(self, test_suites: list[TestSuite]):
+    def __init__(self, test_suites: list):
         self.suites = test_suites
 
 
 class TestResults:
-    results: list[TestResult] = []
+    results: list = []
 
-    def __init__(self, test_results: list[TestResult]):
+    def __init__(self, test_results: list):
         self.results = test_results
