@@ -13,7 +13,6 @@ from testops_commons.katalon.testops.commons.uploader.uploader import ReportUplo
 class ReportLifecycle:
     report_storage: ReportStorage
     report_generator: ReportGenerator
-    report_uploader: ReportUploader
     current_execution: str
     current_test_result: local
     test_results: list

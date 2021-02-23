@@ -17,6 +17,7 @@ class TestOpsConnector:
 
     def get_upload_urls(self, project_id: int, num_of_urls: int) -> list:
         fa: FileApi = FileApi(self.api_client)
+        # print(project_id, number_of_)
         return fa.get_upload_urls(project_id, num_of_urls)
 
     def upload_testops_report(self, body: list, project_id: int, batch: str) -> None:
@@ -26,7 +27,7 @@ class TestOpsConnector:
     def upload_file(self, url: str, file: str):
         with open(file, 'rb') as f:
             http: PoolManager = PoolManager()
-            http.request('POST', url, {
-                'filefield': (os.path.basename(str), f.read(), 'text/json'),
+            http.request('PUT', url, {
+                'filefield': (os.path.basename(file), f.read(), 'application/json'),
             })
 
