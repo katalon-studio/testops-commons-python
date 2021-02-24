@@ -1,6 +1,6 @@
-import threading
 import platform
 import socket
+import threading
 from configparser import ConfigParser
 from os import path
 from time import time_ns
@@ -16,8 +16,7 @@ class ParameterHelper:
 
     def load_properties(self):
         self.parser = ConfigParser()
-        self.parser.read(path.join('..', '..', '..', '..', 'resources', 'testops.ini'))
-        pass
+        self.parser.read(path.join('testops.properties'))
 
     def __init__(self):
         self.load_properties()
@@ -34,11 +33,11 @@ def generate_unique_value() -> str:
 
 
 def generate_upload_batch() -> str:
-    return generate_unique_value() + '-' + str(current_time_millis())
+    return '{}-{}'.format(generate_unique_value(), current_time_millis())
 
 
 def is_blank(string: str) -> bool:
-    return (string is None) or (len(string.strip()) == 0)
+    return not string or not string.strip()
 
 
 def current_time_millis() -> int:
@@ -46,14 +45,8 @@ def current_time_millis() -> int:
 
 
 def current_thread_name() -> str:
-    return f'{platform.node()}.{threading.current_thread().name}({threading.current_thread().ident})'
+    return '{}.{}({})'.format(platform.node(), threading.current_thread().name, threading.current_thread().ident)
 
 
 def host_name() -> str:
-    return f'{socket.gethostname()}'
-
-
-def json_serialize(obj: object):
-    if isinstance(obj, list) or isinstance(obj, dict):
-        return obj
-    return obj.__dict__
+    return str(socket.gethostname())
