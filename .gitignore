@@ -3,3 +3,4 @@
 /dist
 testops_commons.egg-info
 __pycache__
+.vscode
