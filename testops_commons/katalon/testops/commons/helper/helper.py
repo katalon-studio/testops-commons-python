@@ -1,31 +1,16 @@
+import json
 import platform
 import socket
 import threading
-from configparser import ConfigParser
+import os
+from collections import abc
 from os import path
 from time import time_ns
 from uuid import uuid4
 
 from testops_commons.katalon.testops.commons.model import models
 
-
-class ParameterHelper:
-    __testops_section: str = 'testops'
-
-    parser: ConfigParser
-
-    def load_properties(self):
-        self.parser = ConfigParser()
-        self.parser.read(path.join('testops.properties'))
-
-    def __init__(self):
-        self.load_properties()
-
-    def get_parameter(self, key: str) -> str:
-        try:
-            return self.parser[self.__testops_section][key]
-        except KeyError:
-            return None
+CONFIG_FILE = 'testops-config.json'
 
 
 def generate_unique_value() -> str:
@@ -50,3 +35,51 @@ def current_thread_name() -> str:
 
 def host_name() -> str:
     return str(socket.gethostname())
+
+
+def read_json(file):
+    with open(file, 'r', encoding='utf-8') as fp:
+        return json.load(fp)
+
+
+class FrozenJSON:
+    def __init__(self, mapping):
+        self.__data = dict(mapping)
+
+    def __getattr__(self, name):
+        if hasattr(self.__data, name):
+            return getattr(self.__data, name)
+
+        if name in self.__data:
+            return FrozenJSON.build(self.__data[name])
+
+        return None
+
+    @classmethod
+    def build(cls, obj):
+        if isinstance(obj, abc.Mapping):
+            return cls(obj)
+        elif isinstance(obj, abc.MutableSequence):
+            return [cls.build(item) for item in obj]
+        else:
+            return obj
+
+    def __repr__(self) -> str:
+        return '%r' % self.__data
+
+    def __str__(self) -> str:
+        return str(self.__data)
+
+
+class ConfigRepository:
+
+    def __init__(self):
+        self.load()
+
+    def load(self):
+        json_data = read_json(CONFIG_FILE)
+        data = {**json_data, **os.environ}
+        self.__data = FrozenJSON(data)
+
+    def __getattr__(self, name: str):
+        return getattr(self.__data, name)

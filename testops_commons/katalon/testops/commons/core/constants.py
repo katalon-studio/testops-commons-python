@@ -2,20 +2,20 @@ REPORT_FILE_EXTENSION = '.json'
 
 TESTOPS_UUID_ATTR = 'TO_UUID'
 
-TESTOPS_REPORT_DIRECTORY = 'testops.reportFolder'
-
-TESTOPS_REPORT_DIRECTORY_DEFAULT = 'target/testops-report'
-
-TESTOPS_PROJECT_ID = 'testops.projectId'
-
-TESTOPS_SERVER_URL = 'testops.serverUrl'
-
-TESTOPS_BUILD_LABEL = 'testops.buildLabel'
-
-TESTOPS_BUILD_URL = 'testops.buildUrl'
+TESTOPS_SERVER_URL = 'basePath'
 
 TESTOPS_SERVER_URL_DEFAULT = 'https://testops.katalon.io'
 
-TESTOPS_API_KEY = 'testops.apiKey'
+TESTOPS_API_KEY = 'apiKey'
+
+TESTOPS_PROJECT_ID = 'projectId'
+
+TESTOPS_REPORT_DIRECTORY = 'reportFolder'
+
+TESTOPS_REPORT_DIRECTORY_DEFAULT = 'target/testops-report'
+
+TESTOPS_BUILD_LABEL = 'buildLabel'
+
+TESTOPS_BUILD_URL = 'buildUrl'
 
 REPORT_PATTERN = r'.*(?i)\.json'
