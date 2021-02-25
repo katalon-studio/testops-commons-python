@@ -1,11 +1,12 @@
 from pathlib import Path
 
-from testops_commons.katalon.testops.commons.core.constants import *
-from testops_commons.katalon.testops.commons.helper.helper import ConfigurationHelper
+from testops_commons.core.constants import *
+from testops_commons.helper.helper import (
+    ConfigurationHelper, is_blank)
 
 
 class Configuration:
-    def __init__(self, server_url, api_key, project_id, report_folder, build_label, build_url) -> None:
+    def __init__(self, server_url, api_key, project_id, report_folder, build_label, build_url, ):
         self.server_url = server_url
         self.api_key = api_key
         self.project_id = project_id
@@ -48,7 +49,7 @@ class TestOpsConfigurationCreator(ConfigurationCreator):
             TESTOPS_PROJECT_ID,
             env_name=TESTOPS_PROJECT_ID_ENV)
         project_id: int = -1
-        if pj_id_str is not None:
+        if not is_blank(pj_id_str):
             project_id = int(pj_id_str)
 
         return Configuration(server_url, api_key, project_id, report_folder, build_label, build_url)

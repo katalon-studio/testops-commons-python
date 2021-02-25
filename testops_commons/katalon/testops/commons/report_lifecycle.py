@@ -1,13 +1,13 @@
 from _threading_local import local
 
-from testops_commons.katalon.testops.commons.configuration.configuration import ConfigurationCreator, TestOpsConfigurationCreator, \
+from testops_commons.configuration.configuration import ConfigurationCreator, TestOpsConfigurationCreator, \
     Configuration
-from testops_commons.katalon.testops.commons.generator.generator import ReportGenerator, TestOpsReportGenerator
-from testops_commons.katalon.testops.commons.helper import helper
-from testops_commons.katalon.testops.commons.model.models import TestResult, TestSuite, TestResults, TestSuites, \
+from testops_commons.generator.generator import ReportGenerator, TestOpsReportGenerator
+from testops_commons.helper import helper
+from testops_commons.model.models import TestResult, TestSuite, TestResults, TestSuites, \
     Execution, Metadata, Status
-from testops_commons.katalon.testops.commons.report_storage import ReportStorage
-from testops_commons.katalon.testops.commons.uploader.uploader import ReportUploader, TestOpsReportUploader
+from testops_commons.report_storage import ReportStorage
+from testops_commons.uploader.uploader import ReportUploader, TestOpsReportUploader
 
 
 class ReportLifecycle:

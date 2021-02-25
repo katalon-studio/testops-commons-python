@@ -6,12 +6,11 @@ from testops_api import ApiClient
 from testops_api.model.file_resource import FileResource
 from testops_api.model.upload_batch_file_resource import \
     UploadBatchFileResource
-from testops_commons.katalon.testops.commons.configuration.configuration import \
+from testops_commons.configuration.configuration import \
     Configuration
-from testops_commons.katalon.testops.commons.core import constants
-from testops_commons.katalon.testops.commons.helper import file_helper, helper
-from testops_commons.katalon.testops.commons.testops_connector import \
-    TestOpsConnector
+from testops_commons.core import constants
+from testops_commons.helper import file_helper, helper
+from testops_commons.testops_connector import TestOpsConnector
 
 
 class ReportUploader:
@@ -31,6 +30,7 @@ class TestOpsReportUploader(ReportUploader):
             username='',
             password=self.configuration.api_key
         )
+        print(self.configuration.__dict__)
         client: ApiClient = ApiClient(config)
         return client
 

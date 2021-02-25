@@ -1,5 +1,5 @@
-from testops_commons.katalon.testops.commons.helper.helper import *
-from testops_commons.katalon.testops.commons.core.constants import *
+from testops_commons.helper.helper import *
+from testops_commons.core.constants import *
 
 
 def test_generate_unique_value():

@@ -2,7 +2,7 @@ from os import walk, path
 from pathlib import Path
 import re
 
-from testops_commons.katalon.testops.commons.core import constants
+from testops_commons.core import constants
 
 
 def ensure_directory(directory: Path):

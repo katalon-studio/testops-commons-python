@@ -4,11 +4,10 @@ import socket
 import threading
 import os
 from collections import abc
-from os import path
 from time import time_ns
 from uuid import uuid4
 
-from testops_commons.katalon.testops.commons.model import models
+from testops_commons.model import models
 
 CONFIG_FILE = 'testops-config.json'
 

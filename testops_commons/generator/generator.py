@@ -5,10 +5,10 @@ from pathlib import Path
 
 import jsonpickle
 
-from testops_commons.katalon.testops.commons.configuration.configuration import Configuration
-from testops_commons.katalon.testops.commons.core import constants
-from testops_commons.katalon.testops.commons.helper import file_helper, helper
-from testops_commons.katalon.testops.commons.model.models import Execution, TestSuites, TestResults, Metadata
+from testops_commons.configuration.configuration import Configuration
+from testops_commons.core import constants
+from testops_commons.helper import file_helper, helper
+from testops_commons.model.models import Execution, TestSuites, TestResults, Metadata
 
 
 class ReportGenerator:
