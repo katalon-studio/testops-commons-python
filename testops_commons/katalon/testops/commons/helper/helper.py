@@ -22,7 +22,7 @@ def generate_upload_batch() -> str:
 
 
 def is_blank(string: str) -> bool:
-    return not string or not string.strip()
+    return not string or not str(string).strip()
 
 
 def current_time_millis() -> int:
@@ -83,3 +83,24 @@ class ConfigRepository:
 
     def __getattr__(self, name: str):
         return getattr(self.__data, name)
+
+    def get_config(self, name: str, env_name: str = '', default: any = None):
+        result = None
+        if env_name and isinstance(env_name, str):
+            result = self.get(env_name)
+
+        if is_blank(result) and name and isinstance(name, str):
+            names = name.split('.')
+            if len(names) > 0:
+                first, *rest = names
+                result = self.get(first)
+                for n in rest:
+                    if not result:
+                        break
+                    obj = result if isinstance(result, FrozenJSON) else FrozenJSON(result)
+                    result = getattr(obj, n)
+
+        if is_blank(result):
+            result = default
+
+        return result
