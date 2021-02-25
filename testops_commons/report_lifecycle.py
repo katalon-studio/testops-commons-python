@@ -1,13 +1,16 @@
 from _threading_local import local
 
-from testops_commons.configuration.configuration import ConfigurationCreator, TestOpsConfigurationCreator, \
-    Configuration
-from testops_commons.generator.generator import ReportGenerator, TestOpsReportGenerator
+from testops_commons.configuration.configuration import (
+    Configuration, TestOpsConfigurationCreator)
+from testops_commons.generator.generator import (ReportGenerator,
+                                                 TestOpsReportGenerator)
 from testops_commons.helper import helper
-from testops_commons.model.models import TestResult, TestSuite, TestResults, TestSuites, \
-    Execution, Metadata, Status
+from testops_commons.model.models import (Execution, Metadata, Status,
+                                          TestResult, TestResults, TestSuite,
+                                          TestSuites)
 from testops_commons.report_storage import ReportStorage
-from testops_commons.uploader.uploader import ReportUploader, TestOpsReportUploader
+from testops_commons.uploader.uploader import (ReportUploader,
+                                               TestOpsReportUploader)
 
 
 class ReportLifecycle:
@@ -19,7 +22,7 @@ class ReportLifecycle:
     test_suites: list
 
     def __init__(self):
-        config_creator: ConfigurationCreator = TestOpsConfigurationCreator()
+        config_creator: TestOpsConfigurationCreator = TestOpsConfigurationCreator()
         config: Configuration = config_creator.create_configuration()
         self.report_storage = ReportStorage()
         self.report_generator = TestOpsReportGenerator(config)
