@@ -130,8 +130,8 @@ class ReportLifecycle:
         self.test_suites = None
 
 
-def get_execution_status(test_results: list) -> Status:
+def get_execution_status(test_results: list) -> str:
     for result in test_results:
-        if result.status == Status.FAILED.name:
+        if result.status == Status.FAILED:
             return Status.FAILED
     return Status.PASSED

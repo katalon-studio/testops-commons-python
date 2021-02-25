@@ -4,10 +4,9 @@ import socket
 import threading
 import os
 from collections import abc
-from time import time_ns
+from time import time
 from uuid import uuid4
 
-from testops_commons.model import models
 
 CONFIG_FILE = 'testops-config.json'
 
@@ -25,7 +24,7 @@ def is_blank(string: str) -> bool:
 
 
 def current_time_millis() -> int:
-    return time_ns() // 1_000_000
+    return round(time() * 1_000)
 
 
 def current_thread_name() -> str:
