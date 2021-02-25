@@ -71,7 +71,7 @@ class FrozenJSON:
         return str(self.__data)
 
 
-class ConfigRepository:
+class ConfigurationHelper:
 
     def __init__(self):
         self.load()

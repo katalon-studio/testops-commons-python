@@ -1,7 +1,7 @@
 from pathlib import Path
 
 from testops_commons.katalon.testops.commons.core.constants import *
-from testops_commons.katalon.testops.commons.helper.helper import ConfigRepository, is_blank
+from testops_commons.katalon.testops.commons.helper.helper import ConfigurationHelper
 
 
 class Configuration:
@@ -23,7 +23,7 @@ class ConfigurationCreator:
 class TestOpsConfigurationCreator(ConfigurationCreator):
 
     def create_configuration(self) -> Configuration:
-        config = ConfigRepository()
+        config = ConfigurationHelper()
         server_url: str = config.get_config(
             TESTOPS_SERVER_URL,
             env_name=TESTOPS_SERVER_URL_ENV,

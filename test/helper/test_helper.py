@@ -54,7 +54,7 @@ def test_read_json():
 
 
 def test_ConfigLoader():
-    actual = ConfigRepository()
+    actual = ConfigurationHelper()
     print(vars(actual))
     print(actual.get('proxy'))
     assert actual.basePath is not None
@@ -70,7 +70,7 @@ def test_ConfigLoader_get_config():
     env_name = 'PATH'
     default = 123
 
-    conf = ConfigRepository()
+    conf = ConfigurationHelper()
     assert is_blank(conf.get_config(absent_name, env_name=absent_env_name))
     assert conf.get_config(absent_name, env_name=absent_env_name, default=default) == default
     assert not is_blank(conf.get_config(absent_name, env_name=env_name))
