@@ -4,7 +4,7 @@ STRING_EMPTY: str = ''
 class Error:
     def __init__(self, message: str = None, stack_trace: str = None):
         self.message = message
-        self.stack_trace = stack_trace
+        self.stackTrace = stack_trace
 
 
 class Status:
@@ -19,7 +19,7 @@ class Execution:
     def __init__(self, uuid: str = None, parent_uuid: str = None, status: str = None, start: int = None,
                  stop: int = None, duration: int = None, thread: str = None, host: str = None):
         self.uuid: str = uuid
-        self.parent_uuid: str = parent_uuid
+        self.parentUuid: str = parent_uuid
         self.status: str = status
         self.start: int = start
         self.stop: int = stop
@@ -33,7 +33,7 @@ class TestSuite:
                  status: str = None, start: int = None, stop: int = None, duration: int = None, thread: str = None,
                  host: str = None):
         self.uuid: str = uuid
-        self.parent_uuid: str = parent_uuid
+        self.parentUuid: str = parent_uuid
         self.name: str = name
         self.description: str = description
         self.status: str = status
@@ -45,27 +45,13 @@ class TestSuite:
 
 
 class TestResult:
-    uuid: str = None
-    parent_uuid: str = None
-    name: str = None
-    suite_name: str = None
-    description: str = None
-    parameters: dict = {}
-    status: str = None
-    errors: list = []
-    start: int = None
-    stop: int = None
-    duration: int = None
-    thread: str = None
-    host: str = None
-
     def __init__(self, uuid: str = None, parent_uuid: str = None, name: str = None, suite_name: str = None,
                  description: str = None, parameters: dict = None, status: str = None, errors: list = None,
                  start: int = None, stop: int = None, duration: int = None, thread: str = None, host: str = None):
         self.uuid: str = uuid
-        self.parent_uuid: str = parent_uuid
+        self.parentUuid: str = parent_uuid
         self.name: str = name
-        self.suite_name: str = suite_name
+        self.suiteName: str = suite_name
         self.description: str = description
         self.parameters: dict = parameters
         self.status: str = status
@@ -86,8 +72,8 @@ class Metadata:
         self.framework = framework
         self.language = language
         self.version = version
-        self.build_label = build_label
-        self.build_url = build_url
+        self.buildLabel = build_label
+        self.buildUrl = build_url
 
 
 class TestSuites:
