@@ -14,9 +14,8 @@ setuptools.setup(
     url="https://github.com/katalon-studio/testops-commons-python",
     packages=setuptools.find_packages(),
     classifiers=[
-        "TestOps",
-        "Katalon",
         "Operating System :: OS Independent",
     ],
+    keywords=["Katalon", "TestOps"],
     python_requires='>=3.6',
 )
