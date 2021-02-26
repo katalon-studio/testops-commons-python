@@ -1,14 +1,11 @@
-import json
-import os
-
+from os import path
 from pathlib import Path
-
-import jsonpickle
 
 from testops_commons.configuration.configuration import Configuration
 from testops_commons.core import constants
 from testops_commons.helper import file_helper, helper
-from testops_commons.model.models import Execution, TestSuites, TestResults, Metadata
+from testops_commons.model.models import (Execution, Metadata, TestResults,
+                                          TestSuites)
 
 
 class ReportGenerator:
@@ -55,5 +52,4 @@ class TestOpsReportGenerator(ReportGenerator):
         self.write_to_file(metadata, 'metadata' + constants.REPORT_FILE_EXTENSION)
 
     def write_to_file(self, data, file_name: str):
-        with open(os.path.join(self.output_directory, file_name), 'w') as f:
-            f.write(jsonpickle.encode(data, unpicklable=False))
+        helper.write_json(data, path.join(self.output_directory, file_name))

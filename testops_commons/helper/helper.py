@@ -1,4 +1,5 @@
 import json
+import jsonpickle
 import platform
 import socket
 import threading
@@ -9,6 +10,7 @@ from uuid import uuid4
 
 
 CONFIG_FILE = 'testops-config.json'
+jsonpickle.set_encoder_options('json', sort_keys=True, indent=2)
 
 
 def generate_unique_value() -> str:
@@ -38,6 +40,11 @@ def host_name() -> str:
 def read_json(file):
     with open(file, 'r', encoding='utf-8') as fp:
         return json.load(fp)
+
+
+def write_json(obj, file):
+    with open(file, 'w') as f:
+        f.write(jsonpickle.encode(obj, unpicklable=False))
 
 
 class FrozenJSON:
