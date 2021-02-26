@@ -4,3 +4,6 @@
 testops_commons.egg-info
 __pycache__
 .vscode
+
+test/helper/result.json
+testops-report
