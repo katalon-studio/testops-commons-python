@@ -30,6 +30,7 @@ class TestOpsReportUploader(ReportUploader):
             username='',
             password=self.configuration.api_key
         )
+        config.verify_ssl = False
         print(self.configuration.__dict__)
         client: ApiClient = ApiClient(config)
         return client
