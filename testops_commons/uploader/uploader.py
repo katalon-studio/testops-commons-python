@@ -6,13 +6,17 @@ from testops_api import ApiClient
 from testops_api.model.file_resource import FileResource
 from testops_api.model.upload_batch_file_resource import \
     UploadBatchFileResource
-from urllib3 import make_headers, HTTPConnectionPool
+from urllib3 import make_headers, HTTPConnectionPool, HTTPSConnectionPool
 
 from testops_commons.configuration.configuration import \
     Configuration
 from testops_commons.core import constants
 from testops_commons.helper import file_helper, helper
 from testops_commons.testops_connector import TestOpsConnector
+
+PROXY_PROTOCOL_HTTP = "http"
+
+PROXY_PROTOCOL_HTTPS = "https"
 
 
 class ReportUploader:
@@ -33,8 +37,12 @@ class TestOpsReportUploader(ReportUploader):
             password=self.configuration.api_key
         )
         config.verify_ssl = False
-        config.proxy = HTTPConnectionPool(host=self.configuration.proxy_information.host
-                                          , port=self.configuration.proxy_information.port)
+        if self.configuration.proxy_information.protocol == PROXY_PROTOCOL_HTTP:
+            config.proxy = HTTPConnectionPool(host=self.configuration.proxy_information.host
+                                              , port=self.configuration.proxy_information.port)
+        else:
+            config.proxy = HTTPSConnectionPool(host=self.configuration.proxy_information.host
+                                               , port=self.configuration.proxy_information.port)
         if not helper.is_blank(self.configuration.proxy_information.username) and not helper.is_blank(
                 self.configuration.proxy_information.password):
             config.proxy_headers = make_headers(proxy_basic_auth="{}:{}"
