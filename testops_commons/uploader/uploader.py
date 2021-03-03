@@ -43,8 +43,7 @@ class TestOpsReportUploader(ReportUploader):
         else:
             config.proxy = HTTPSConnectionPool(host=self.configuration.proxy_information.host
                                                , port=self.configuration.proxy_information.port)
-        if not helper.is_blank(self.configuration.proxy_information.username) and not helper.is_blank(
-                self.configuration.proxy_information.password):
+        if self.configuration.proxy_information.username and self.configuration.proxy_information.password:
             config.proxy_headers = make_headers(proxy_basic_auth="{}:{}"
                                                 .format(self.configuration.proxy_information.username,
                                                         self.configuration.proxy_information.password))
