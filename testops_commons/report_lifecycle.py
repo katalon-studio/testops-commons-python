@@ -24,6 +24,7 @@ class ReportLifecycle:
     def __init__(self):
         config_creator: TestOpsConfigurationCreator = TestOpsConfigurationCreator()
         config: Configuration = config_creator.create_configuration()
+        config.proxy_information = config_creator.create_proxy_information()
         self.report_storage = ReportStorage()
         self.report_generator = TestOpsReportGenerator(config)
         self.report_uploader = TestOpsReportUploader(config)
