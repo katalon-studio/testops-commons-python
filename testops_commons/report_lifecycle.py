@@ -21,9 +21,11 @@ class ReportLifecycle:
     test_results: list
     test_suites: list
 
-    def __init__(self):
+    def __init__(self, is_parallel=False):
         config_creator: TestOpsConfigurationCreator = TestOpsConfigurationCreator()
         config: Configuration = config_creator.create_configuration()
+        config.is_parallel = is_parallel
+        self.is_parallel = is_parallel
         self.report_storage = ReportStorage()
         self.report_generator = TestOpsReportGenerator(config)
         self.report_uploader = TestOpsReportUploader(config)
@@ -31,6 +33,10 @@ class ReportLifecycle:
         self.set_current_test_result_uuid()
         self.test_results = []
         self.test_suites = []
+
+    def set_parallel(self, enabled):
+        self.is_parallel = enabled
+        self.report_generator.set_parallel(enabled)
 
     def current_test_result_uuid(self) -> str:
         return self.current_test_result.current_test_result_uuid
@@ -118,16 +124,21 @@ class ReportLifecycle:
     def write_metadata(self, metadata: Metadata):
         self.report_generator.write_metadata(metadata)
 
+    def write_global_execution_uuid(self, uuid):
+        self.report_generator.write_global_execution_uuid(uuid)
+
     def upload(self):
         self.report_uploader.upload()
 
-    def reset(self):
+    def reset(self, clean_report=False):
         self.current_execution = None
         self.report_storage.clear()
         self.test_results.clear()
         self.test_suites.clear()
         self.test_results = None
         self.test_suites = None
+        if clean_report:
+            self.report_generator.clean_report_dir()
 
 
 def get_execution_status(test_results: list) -> str:
