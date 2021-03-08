@@ -1,4 +1,8 @@
 import json
+import logging
+import sys
+from logging import Logger, StreamHandler
+
 import jsonpickle
 import platform
 import socket
@@ -11,6 +15,9 @@ from uuid import uuid4
 
 CONFIG_FILE = 'testops-config.json'
 jsonpickle.set_encoder_options('json', sort_keys=True, indent=2)
+
+
+DEFAULT_CONSOLE_LOG_OUTPUT = StreamHandler(sys.stdout)
 
 
 def generate_unique_value() -> str:
@@ -45,6 +52,13 @@ def read_json(file):
 def write_json(obj, file):
     with open(file, 'w') as f:
         f.write(jsonpickle.encode(obj, unpicklable=False))
+
+
+def get_logger(name) -> Logger:
+    logger = logging.getLogger()
+    logger.setLevel(logging.DEBUG)
+    logger.addHandler(DEFAULT_CONSOLE_LOG_OUTPUT)
+    return logger
 
 
 class FrozenJSON:

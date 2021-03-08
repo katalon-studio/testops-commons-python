@@ -21,6 +21,12 @@ class ReportGenerator:
     def write_metadata(self, metadata: Metadata):
         pass
 
+    def write_global_execution_uuid(self, uuid):
+        pass
+
+    def clean_report_dir(self):
+        pass
+
 
 class TestOpsReportGenerator(ReportGenerator):
 
@@ -29,9 +35,24 @@ class TestOpsReportGenerator(ReportGenerator):
 
     def __init__(self, configuration: Configuration):
         self.configuration = configuration
-        self.output_directory = configuration.report_folder
+        self.is_parallel = configuration.is_parallel
+        report_path = configuration.report_folder
+        if self.is_parallel:
+            report_path = path.join(configuration.report_folder, helper.current_thread_name())
+        self.output_directory = report_path
+
+    def clean_report_dir(self):
+        file_helper.clean_dir(self.configuration.report_folder)
+
+    def set_parallel(self, enabled):
+        if enabled == self.is_parallel:
+            return
+        self.is_parallel = enabled
+        if enabled:
+            self.output_directory = path.join(self.configuration.report_folder, helper.current_thread_name())
+        else:
+            self.output_directory = self.configuration.report_folder
         file_helper.ensure_directory(self.output_directory)
-        pass
 
     def write_execution(self, execution: Execution):
         self.write_to_file(execution, 'execution' + constants.REPORT_FILE_EXTENSION)
@@ -49,7 +70,25 @@ class TestOpsReportGenerator(ReportGenerator):
         build_url: str = self.configuration.build_url
         metadata.buildUrl = build_url
         metadata.buildLabel = build_label
+        execution_uuid = self.get_master_execution_uuid()
+        if execution_uuid:
+            metadata.executionUuid = execution_uuid
         self.write_to_file(metadata, 'metadata' + constants.REPORT_FILE_EXTENSION)
 
+    def write_global_execution_uuid(self, uuid):
+        if not Path(self.configuration.report_folder).exists():
+            file_helper.ensure_directory(self.configuration.report_folder)
+        with open(path.join(self.configuration.report_folder, "execution.uuid"), "w") as f:
+            f.write(uuid)
+
     def write_to_file(self, data, file_name: str):
+        if not Path(self.output_directory).exists():
+            file_helper.ensure_directory(self.output_directory)
         helper.write_json(data, path.join(self.output_directory, file_name))
+
+    def get_master_execution_uuid(self) -> str:
+        try:
+            with open(path.join(self.configuration.report_folder, "execution.uuid")) as f:
+                return f.read()
+        except Exception:
+            return None
