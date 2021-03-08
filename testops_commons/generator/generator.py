@@ -47,8 +47,8 @@ class TestOpsReportGenerator(ReportGenerator):
     def write_metadata(self, metadata: Metadata):
         build_label: str = self.configuration.build_label
         build_url: str = self.configuration.build_url
-        metadata.build_url = build_url
-        metadata.build_label = build_label
+        metadata.buildUrl = build_url
+        metadata.buildLabel = build_label
         self.write_to_file(metadata, 'metadata' + constants.REPORT_FILE_EXTENSION)
 
     def write_to_file(self, data, file_name: str):
