@@ -59,7 +59,7 @@ class ReportLifecycle:
         testsuite.start = helper.current_time_millis()
         execution: Execution = self.report_storage.get(self.current_execution, Execution)
         if execution is not None:
-            testsuite.parent_uuid = execution.uuid
+            testsuite.parentUuid = execution.uuid
         self.report_storage.put(uuid, testsuite)
 
     def start_testcase(self):
