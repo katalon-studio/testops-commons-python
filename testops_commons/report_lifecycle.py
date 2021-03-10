@@ -1,4 +1,8 @@
 from _threading_local import local
+from copy import copy
+from logging import Logger
+
+import jsonpickle
 
 from testops_commons.configuration.configuration import (
     Configuration, TestOpsConfigurationCreator)
@@ -9,8 +13,7 @@ from testops_commons.model.models import (Execution, Metadata, Status,
                                           TestResult, TestResults, TestSuite,
                                           TestSuites)
 from testops_commons.report_storage import ReportStorage
-from testops_commons.uploader.uploader import (ReportUploader,
-                                               TestOpsReportUploader)
+from testops_commons.uploader.uploader import TestOpsReportUploader
 
 
 class ReportLifecycle:
@@ -21,16 +24,23 @@ class ReportLifecycle:
     test_results: list
     test_suites: list
 
-    def __init__(self):
+    def __init__(self, is_parallel=False):
+        self.logger: Logger = helper.get_logger(__name__)
         config_creator: TestOpsConfigurationCreator = TestOpsConfigurationCreator()
-        config: Configuration = config_creator.create_configuration()
+        self.config: Configuration = config_creator.create_configuration()
+        self.config.is_parallel = is_parallel
+        self.is_parallel = is_parallel
         self.report_storage = ReportStorage()
-        self.report_generator = TestOpsReportGenerator(config)
-        self.report_uploader = TestOpsReportUploader(config)
+        self.report_generator = TestOpsReportGenerator(self.config)
+        self.report_uploader = TestOpsReportUploader(self.config)
         self.current_test_result = local()
         self.set_current_test_result_uuid()
         self.test_results = []
         self.test_suites = []
+
+    def set_parallel(self, enabled):
+        self.is_parallel = enabled
+        self.report_generator.set_parallel(enabled)
 
     def current_test_result_uuid(self) -> str:
         return self.current_test_result.current_test_result_uuid
@@ -118,7 +128,12 @@ class ReportLifecycle:
     def write_metadata(self, metadata: Metadata):
         self.report_generator.write_metadata(metadata)
 
+    def write_global_execution_uuid(self, uuid):
+        self.report_generator.write_global_execution_uuid(uuid)
+
     def upload(self):
+        self.logger.info("TestOps Configuration:")
+        self.logger.info(jsonpickle.encode(_get_config_for_log(self.config), unpicklable=False))
         self.report_uploader.upload()
 
     def reset(self):
@@ -128,6 +143,17 @@ class ReportLifecycle:
         self.test_suites.clear()
         self.test_results = None
         self.test_suites = None
+
+    def clean_report_dir(self):
+        self.report_generator.clean_report_dir()
+
+
+def _get_config_for_log(config):
+    config_copy = copy(config)
+    config_copy.api_key = "*"
+    config_copy.__dict__.pop("is_parallel")
+    config_copy.report_folder = config_copy.report_folder.name
+    return config_copy
 
 
 def get_execution_status(test_results: list) -> str:

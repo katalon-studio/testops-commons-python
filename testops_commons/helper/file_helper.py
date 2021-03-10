@@ -1,3 +1,4 @@
+import shutil
 from os import walk, path
 from pathlib import Path
 import re
@@ -6,13 +7,23 @@ from testops_commons.core import constants
 
 
 def ensure_directory(directory: Path):
-    directory.mkdir(parents=True, exist_ok=True)
+    p = directory
+    if isinstance(p, str):
+        p = Path(p)
+    p.mkdir(parents=True, exist_ok=True)
 
 
 def scan_files(report_path: Path) -> list:
     paths = []
     __scan_dir(paths, report_path)
     return paths
+
+
+def clean_dir(path):
+    p = path
+    if isinstance(p, str):
+        p = Path(p)
+    shutil.rmtree(p)
 
 
 def __scan_dir(paths: list, directory: Path):
