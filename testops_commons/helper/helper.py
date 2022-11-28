@@ -4,6 +4,8 @@ import platform
 import socket
 import threading
 import os
+import base64
+
 from collections import abc
 from time import time
 from uuid import uuid4
@@ -46,6 +48,16 @@ def write_json(obj, file):
     with open(file, 'w') as f:
         f.write(jsonpickle.encode(obj, unpicklable=False))
 
+
+def encode_base64(data: str) -> str:
+    return base64.b64encode(data.encode()).decode()
+
+def get_api_auth_headers(api_key: str) -> dict:
+    return {
+        "Content-Type": "application/json;charset=UTF-8",
+        "Authorization": "Basic "
+        + encode_base64(":" + api_key),
+    }
 
 class FrozenJSON:
     def __init__(self, mapping):

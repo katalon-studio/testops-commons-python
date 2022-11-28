@@ -7,3 +7,5 @@ __pycache__
 
 test/helper/result.json
 testops-report
+
+.venv

@@ -1,17 +1,24 @@
+import json
+import logging
 from os import path
+import os
 from pathlib import Path
+import time
 
 import testops_api
 from testops_api import ApiClient
 from testops_api.model.file_resource import FileResource
 from testops_api.model.upload_batch_file_resource import \
     UploadBatchFileResource
-from urllib3 import make_headers, HTTPConnectionPool, HTTPSConnectionPool
+from urllib3 import PoolManager, make_headers, HTTPConnectionPool, HTTPSConnectionPool
+import urllib3
+from urllib3.exceptions import InsecureRequestWarning
 
 from testops_commons.configuration.configuration import \
     Configuration
 from testops_commons.core import constants
 from testops_commons.helper import file_helper, helper
+from testops_commons.model.models import Apis, CheckpointMatchStatus, CheckpointPixel, RequestMethod, TestOpsException, UploadInfo, VisualTestingCheckpointMismatchException, VisualTestingTimeoutException
 from testops_commons.testops_connector import TestOpsConnector
 
 PROXY_PROTOCOL_HTTP = "http"
@@ -93,3 +100,149 @@ class TestOpsReportUploader(ReportUploader):
                 uploaded.append(rel)
         self.testops_connector.upload_testops_report(
             uploaded, project_id, bath)
+
+
+class VisualTestingUploader:
+    
+    def __init__(self, timeout: int = 60) -> None:
+        urllib3.disable_warnings(InsecureRequestWarning) # Suppress SSL warning
+        self.timeout = timeout
+        self.__wait_time = 5
+        
+        self.project_id: int = int(os.getenv(constants.KATALON_TESTOPS_PROJECT_ID_ENV))
+        self.api_key: str = os.getenv(constants.KATALON_TESTOPS_API_KEY_ENV)
+        self.server: str = os.getenv(constants.KATALON_TESTOPS_SERVER_ENV)
+        self.session_id: str = os.getenv(constants.KATALON_TESTOPS_SESSION_ID_ENV)
+
+        self.__api_headers = helper.get_api_auth_headers(self.api_key)
+        self.__http = PoolManager(1, cert_reqs="CERT_NONE")
+        self.__logger = logging.getLogger(__name__)
+
+
+    def __get_upload_info(self) -> UploadInfo:
+        try:
+            self.__logger.info("Connecting to Katalon TestOps")
+            r = self.__http.request(
+                RequestMethod.GET,
+                self.server + Apis.GET_UPLOAD_URL,
+                fields={"projectId": str(self.project_id)},
+                headers=self.__api_headers,
+            )
+            info = json.loads(r.data.decode())
+            return UploadInfo(info["path"], info["uploadUrl"])
+        except Exception as e:
+            self.__logger.error(__name__ + " Error.")
+            raise TestOpsException(e)
+
+
+    def __upload_file_s3(self, upload_url: str, image_path: str, data: bytes) -> None:
+        try:
+            self.__logger.info("Uploading Checkpoint image %s to Katalon TestOps", image_path)
+            self.__http.request(
+                RequestMethod.PUT,
+                upload_url,
+                body=data,
+                headers={"Content-Type": "image/*"},
+            )
+        except Exception as e:
+            self.__logger.error("Failed to upload Checkpoint image %s", image_path)
+            raise TestOpsException(e)
+
+
+    def __send_vst_info(self, name: str, path: str) -> int:
+        try:
+            r = self.__http.request(
+                RequestMethod.POST,
+                self.server + Apis.UPLOAD_CHECKPOINT,
+                body=json.dumps(
+                    {
+                        "projectId": str(self.project_id),
+                        "sessionId": self.session_id,
+                        "batch": helper.generate_upload_batch(),
+                        "fileName": name,
+                        "uploadedPath": path,
+                    }
+                ),
+                headers=self.__api_headers,
+            )
+            return int(json.loads(r.data.decode())["id"])
+        except Exception as e:
+            self.__logger.error(__name__ + " Error.")
+            raise TestOpsException(e)
+
+
+    def __get_vst_result(self, checkpoint_id: int) -> CheckpointPixel:
+        try:
+            r = self.__http.request(
+                RequestMethod.POST,
+                self.server + Apis.SEARCH,
+                body=json.dumps(
+                    {
+                        "pagination": {"page": 0, "size": 1, "sorts": []},
+                        "conditions": [
+                            {
+                                "key": "checkpointId",
+                                "operator": "=",
+                                "value": str(checkpoint_id),
+                            },
+                            {
+                                "key": "Project.id",
+                                "operator": "=",
+                                "value": str(self.project_id),
+                            },
+                        ],
+                        "type": "CheckpointPixel",
+                    }
+                ),
+                headers=self.__api_headers,
+            )
+            checkpoint_results: list = json.loads(r.data.decode()).get("content", [])
+            if len(checkpoint_results) == 0:
+                return CheckpointPixel(None, None)
+
+            checkpoint_pixel: dict = checkpoint_results.pop()
+            checkpoint: dict = checkpoint_pixel["checkpoint"]
+            checkpoint_name = checkpoint["screenshot"]["name"]
+            checkpoint_status = checkpoint.get("matchStatus", None)
+            return CheckpointPixel(checkpoint_name, checkpoint_status)
+        except Exception as e:
+            self.__logger.error(__name__ + " Error.")
+            raise TestOpsException(e)
+
+
+    def verify_checkpoint(self, image_path: str) -> str:
+        # Request upload url
+        upload_info = self.__get_upload_info()
+
+        # Upload file
+        with open(image_path, "rb") as f:
+            image_data = f.read()
+            self.__upload_file_s3(upload_info.upload_url, image_path, image_data)
+
+        checkpoint_name = file_helper.get_file_name(image_path)
+        checkpoint_id: int = self.__send_vst_info(checkpoint_name, upload_info.path)
+
+        # Waiting for result
+        self.__logger.info("Waiting for Visual Testing result from Katalon TestOps...")
+        start_time = time.time()
+        while True:
+            time.sleep(self.__wait_time)
+            checkpoint_result = self.__get_vst_result(checkpoint_id)
+
+            if checkpoint_result.matchStatus == CheckpointMatchStatus.MATCH:
+                self.__logger.info("Checkpoint MATCH: " + checkpoint_result.name)
+                break
+            if checkpoint_result.matchStatus == CheckpointMatchStatus.MISMATCH:
+                raise VisualTestingCheckpointMismatchException("Checkpoint MISMATCH: " + checkpoint_result.name)
+
+            if checkpoint_result.matchStatus == CheckpointMatchStatus.NEW:
+                self.__logger.info("New Checkpoint: " + checkpoint_result.name)
+                break
+
+            if (time.time() - start_time) > self.timeout:
+                raise VisualTestingTimeoutException(
+                    "Failed to verify Checkpoint "
+                    + checkpoint_name
+                    + ". Timeout."
+                )
+
