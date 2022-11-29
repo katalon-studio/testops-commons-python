@@ -210,7 +210,7 @@ class VisualTestingUploader:
             raise TestOpsException(e)
 
 
-    def verify_checkpoint(self, image_path: str) -> str:
+    def verify_checkpoint(self, image_path: str) -> None:
         # Request upload url
         upload_info = self.__get_upload_info()
 
