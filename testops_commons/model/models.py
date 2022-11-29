@@ -107,7 +107,7 @@ class RequestMethod:
 @dataclass
 class Apis:
     GET_UPLOAD_URL: str = "/api/v1/files/upload-url"
-    UPLOAD_CHECKPOINT: str = "/api/v1/checkpoints/upload-checkpoint"
+    UPLOAD_CHECKPOINT: str = "/api/v1/checkpoints"
     SEARCH: str = "/api/v1/search"
     UPDATE_RUNNING_TEST_RUN: str = '/api/v1/katalon/test-reports/update-result?projectId={project_id}'
 
