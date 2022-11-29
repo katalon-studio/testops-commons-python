@@ -110,7 +110,7 @@ class VisualTestingUploader:
         
         self.project_id: int = int(getenv(constants.TESTOPS_PROJECT_ID_ENV))
         self.api_key: str = getenv(constants.TESTOPS_API_KEY_ENV)
-        self.server: str = getenv(constants.TESTOPS_SERVER_ENV)
+        self.server: str = getenv(constants.TESTOPS_SERVER_URL_ENV)
         self.session_id: str = getenv(constants.TESTOPS_SESSION_ID_ENV)
 
         self.__api_headers = helper.get_api_auth_headers(self.api_key)
