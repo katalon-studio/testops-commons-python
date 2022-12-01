@@ -81,6 +81,8 @@ class VisualTestingUploader:
         self.__logger = logging.getLogger(__name__)
         self.project_id: int = int(getenv(constants.TESTOPS_PROJECT_ID_ENV))
         self.session_id: str = getenv(constants.TESTOPS_SESSION_ID_ENV)
+        if getenv(constants.TESTOPS_BASELINE_COLLECTION_ID_ENV) != 'None':
+            self.baseline_collection_id = int(getenv(constants.TESTOPS_BASELINE_COLLECTION_ID_ENV))
         
 
     def __get_upload_info(self) -> FileResource:
@@ -107,6 +109,7 @@ class VisualTestingUploader:
             upload_checkpoint_resource.batch = helper.generate_upload_batch()
             upload_checkpoint_resource.file_name = name
             upload_checkpoint_resource.uploaded_path = path
+            upload_checkpoint_resource.baseline_collection_id = self.baseline_collection_id
             return self.testops_connector.upload_checkpoint(upload_checkpoint_resource).id
         except Exception as e:
             self.__logger.error(__name__ + " Error.")
