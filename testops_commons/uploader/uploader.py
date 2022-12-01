@@ -74,24 +74,30 @@ class TestOpsReportUploader(ReportUploader):
 
 class VisualTestingUploader:
     
-    def __init__(self, configuration: Configuration):
-        self.configuration = configuration
+    def __init__(self, timeout: int = 60) -> None:
         self.report_pattern = constants.REPORT_PATTERN
         self.testops_connector = TestOpsConnector(create_api_client(self))
         self.__logger = logging.getLogger(__name__)
+        self.timeout = timeout
+        self.__wait_time = 5
+        self.api_key: str = getenv(constants.TESTOPS_API_KEY_ENV)
+        self.project_id: int = None
         if getenv(constants.TESTOPS_PROJECT_ID_ENV) != 'None':
-            self.project_id: int = int(getenv(constants.TESTOPS_PROJECT_ID_ENV))
+            self.project_id = int(getenv(constants.TESTOPS_PROJECT_ID_ENV))
+
         self.session_id: str = getenv(constants.TESTOPS_SESSION_ID_ENV)
+
+        self.baseline_collection_id: int = None
         if getenv(constants.TESTOPS_BASELINE_COLLECTION_ID_ENV) != 'None':
             self.baseline_collection_id = int(getenv(constants.TESTOPS_BASELINE_COLLECTION_ID_ENV))
         
 
     def __get_upload_info(self) -> FileResource:
-        api_key = self.configuration.api_key
+        api_key = self.api_key
         if helper.is_blank(api_key):
             return None
 
-        project_id = self.configuration.project_id
+        project_id = self.project_id
         if project_id is None:
             return None
         try:
