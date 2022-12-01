@@ -109,13 +109,13 @@ class VisualTestingUploader:
         self.__wait_time = 5
         
         self.project_id: int = None
-        if getenv(constants.TESTOPS_PROJECT_ID_ENV) != 'None':
+        if getenv(constants.TESTOPS_PROJECT_ID_ENV) is not None:
             self.project_id = int(getenv(constants.TESTOPS_PROJECT_ID_ENV))
         self.api_key: str = getenv(constants.TESTOPS_API_KEY_ENV)
         self.server: str = getenv(constants.TESTOPS_SERVER_URL_ENV)
         self.session_id: str = getenv(constants.TESTOPS_SESSION_ID_ENV)
         self.baseline_collection_id: int = None
-        if getenv(constants.TESTOPS_BASELINE_COLLECTION_ID_ENV) != 'None':
+        if getenv(constants.TESTOPS_BASELINE_COLLECTION_ID_ENV) is not None:
             self.baseline_collection_id = int(getenv(constants.TESTOPS_BASELINE_COLLECTION_ID_ENV))
 
         self.__api_headers = helper.get_api_auth_headers(self.api_key)
