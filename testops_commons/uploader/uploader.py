@@ -108,7 +108,7 @@ class VisualTestingUploader:
     def __send_vst_info(self, name: str, path: str) -> int:
         try:
             upload_checkpoint_resource: UploadCheckpointResource = UploadCheckpointResource()
-            upload_checkpoint_resource.project_id = str(self.configuration.project_id)
+            upload_checkpoint_resource.project_id = self.configuration.project_id
             upload_checkpoint_resource.session_id = self.session_id
             upload_checkpoint_resource.batch = helper.generate_upload_batch()
             upload_checkpoint_resource.file_name = name
