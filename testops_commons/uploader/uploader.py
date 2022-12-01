@@ -108,10 +108,15 @@ class VisualTestingUploader:
         self.timeout = timeout
         self.__wait_time = 5
         
-        self.project_id: int = int(getenv(constants.TESTOPS_PROJECT_ID_ENV))
+        self.project_id: int = None
+        if getenv(constants.TESTOPS_PROJECT_ID_ENV) != 'None':
+            self.project_id = int(getenv(constants.TESTOPS_PROJECT_ID_ENV))
         self.api_key: str = getenv(constants.TESTOPS_API_KEY_ENV)
         self.server: str = getenv(constants.TESTOPS_SERVER_URL_ENV)
         self.session_id: str = getenv(constants.TESTOPS_SESSION_ID_ENV)
+        self.baseline_collection_id: int = None
+        if getenv(constants.TESTOPS_BASELINE_COLLECTION_ID_ENV) != 'None':
+            self.baseline_collection_id = int(getenv(constants.TESTOPS_BASELINE_COLLECTION_ID_ENV))
 
         self.__api_headers = helper.get_api_auth_headers(self.api_key)
         self.__http = PoolManager(1, cert_reqs="CERT_NONE")
@@ -160,6 +165,7 @@ class VisualTestingUploader:
                         "batch": helper.generate_upload_batch(),
                         "fileName": name,
                         "uploadedPath": path,
+                        "baselineCollectionId": self.baseline_collection_id
                     }
                 ),
                 headers=self.__api_headers,
