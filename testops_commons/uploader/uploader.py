@@ -14,7 +14,7 @@ from testops_commons.core import constants
 from testops_commons.helper import file_helper, helper
 from testops_commons.model.models import Apis, CheckpointMatchStatus, CheckpointPixel, RequestMethod, TestOpsException, UploadInfo, VisualTestingCheckpointMismatchException, VisualTestingTimeoutException
 from testops_commons.testops_connector import TestOpsConnector
-from utils import create_api_client
+from .utils import create_api_client
 
 PROXY_PROTOCOL_HTTP = "http"
 
