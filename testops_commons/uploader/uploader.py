@@ -9,7 +9,7 @@ from testops_api.model.upload_batch_file_resource import \
 from testops_api.model.upload_checkpoint_resource import UploadCheckpointResource
 
 from testops_commons.configuration.configuration import \
-    Configuration
+    Configuration, TestOpsConfigurationCreator
 from testops_commons.core import constants
 from testops_commons.helper import file_helper, helper
 from testops_commons.model.models import Apis, CheckpointMatchStatus, CheckpointPixel, RequestMethod, TestOpsException, UploadInfo, VisualTestingCheckpointMismatchException, VisualTestingTimeoutException
@@ -76,28 +76,25 @@ class VisualTestingUploader:
     
     def __init__(self, timeout: int = 60) -> None:
         self.report_pattern = constants.REPORT_PATTERN
-        self.testops_connector = TestOpsConnector(create_api_client(self))
         self.__logger = logging.getLogger(__name__)
         self.timeout = timeout
         self.__wait_time = 5
-        self.api_key: str = getenv(constants.TESTOPS_API_KEY_ENV)
-        self.project_id: int = None
-        if getenv(constants.TESTOPS_PROJECT_ID_ENV) != 'None':
-            self.project_id = int(getenv(constants.TESTOPS_PROJECT_ID_ENV))
 
         self.session_id: str = getenv(constants.TESTOPS_SESSION_ID_ENV)
 
-        self.baseline_collection_id: int = None
-        if getenv(constants.TESTOPS_BASELINE_COLLECTION_ID_ENV) != 'None':
-            self.baseline_collection_id = int(getenv(constants.TESTOPS_BASELINE_COLLECTION_ID_ENV))
+        testOpsConfigurationCreator: TestOpsConfigurationCreator = TestOpsConfigurationCreator()
+        self.configuration: Configuration = testOpsConfigurationCreator.create_configuration()
+        
+        self.testops_connector = TestOpsConnector(create_api_client(self))
+        
         
 
     def __get_upload_info(self) -> FileResource:
-        api_key = self.api_key
+        api_key = self.configuration.api_key
         if helper.is_blank(api_key):
             return None
 
-        project_id = self.project_id
+        project_id = self.configuration.project_id
         if project_id is None:
             return None
         try:
@@ -111,12 +108,12 @@ class VisualTestingUploader:
     def __send_vst_info(self, name: str, path: str) -> int:
         try:
             upload_checkpoint_resource: UploadCheckpointResource = UploadCheckpointResource()
-            upload_checkpoint_resource.project_id = str(self.project_id)
+            upload_checkpoint_resource.project_id = str(self.configuration.project_id)
             upload_checkpoint_resource.session_id = self.session_id
             upload_checkpoint_resource.batch = helper.generate_upload_batch()
             upload_checkpoint_resource.file_name = name
             upload_checkpoint_resource.uploaded_path = path
-            upload_checkpoint_resource.baseline_collection_id = self.baseline_collection_id
+            upload_checkpoint_resource.baseline_collection_id = self.configuration.baseline_collection_id
             return self.testops_connector.upload_checkpoint(upload_checkpoint_resource).id
         except Exception as e:
             self.__logger.error(__name__ + " Error.")
@@ -125,7 +122,7 @@ class VisualTestingUploader:
 
     def __get_vst_result(self, checkpoint_id: int) -> CheckpointPixel:
         try:
-            checkpoint_pixels_search_result = self.testops_connector.search_checkpoint_pixels(project_id=self.project_id, checkpoint_id=checkpoint_id)
+            checkpoint_pixels_search_result = self.testops_connector.search_checkpoint_pixels(project_id=self.configuration.project_id, checkpoint_id=checkpoint_id)
             checkpoint_results: list = checkpoint_pixels_search_result.content
             if len(checkpoint_results) == 0:
                 return CheckpointPixel(None, None)
