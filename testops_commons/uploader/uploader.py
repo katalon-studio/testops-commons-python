@@ -79,7 +79,8 @@ class VisualTestingUploader:
         self.report_pattern = constants.REPORT_PATTERN
         self.testops_connector = TestOpsConnector(create_api_client(self))
         self.__logger = logging.getLogger(__name__)
-        self.project_id: int = int(getenv(constants.TESTOPS_PROJECT_ID_ENV))
+        if getenv(constants.TESTOPS_PROJECT_ID_ENV) != 'None':
+            self.project_id: int = int(getenv(constants.TESTOPS_PROJECT_ID_ENV))
         self.session_id: str = getenv(constants.TESTOPS_SESSION_ID_ENV)
         if getenv(constants.TESTOPS_BASELINE_COLLECTION_ID_ENV) != 'None':
             self.baseline_collection_id = int(getenv(constants.TESTOPS_BASELINE_COLLECTION_ID_ENV))
