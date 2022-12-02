@@ -79,8 +79,21 @@ class VisualTestingUploader:
         self.__logger = logging.getLogger(__name__)
         self.timeout = timeout
         self.__wait_time = 5
+<<<<<<< HEAD
 
         self.session_id: str = getenv(constants.TESTOPS_SESSION_ID_ENV)
+=======
+        
+        self.project_id: int = None
+        if getenv(constants.TESTOPS_PROJECT_ID_ENV) is not None:
+            self.project_id = int(getenv(constants.TESTOPS_PROJECT_ID_ENV))
+        self.api_key: str = getenv(constants.TESTOPS_API_KEY_ENV)
+        self.server: str = getenv(constants.TESTOPS_SERVER_URL_ENV)
+        self.session_id: str = getenv(constants.TESTOPS_SESSION_ID_ENV)
+        self.baseline_collection_id: int = None
+        if getenv(constants.TESTOPS_BASELINE_COLLECTION_ID_ENV) is not None:
+            self.baseline_collection_id = int(getenv(constants.TESTOPS_BASELINE_COLLECTION_ID_ENV))
+>>>>>>> master
 
         testOpsConfigurationCreator: TestOpsConfigurationCreator = TestOpsConfigurationCreator()
         self.configuration: Configuration = testOpsConfigurationCreator.create_configuration()
