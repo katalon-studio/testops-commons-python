@@ -34,29 +34,6 @@ class TestOpsConnector:
         api = VisualTestingApi(self.api_client)
         return api.upload_checkpoint(body)
 
-    def search_checkpoint_pixels(self, project_id, checkpoint_id):
-        api = SearchApi(self.api_client)
-
-        checkpoint_id_condition: SearchRequestCondition = SearchRequestCondition()
-        checkpoint_id_condition.key = "checkpointId"
-        checkpoint_id_condition.operator = "="
-        checkpoint_id_condition.value = str(checkpoint_id)
-
-        project_id_condition: SearchRequestCondition = SearchRequestCondition()
-        project_id_condition.key = "Project.id"
-        project_id_condition.operator = "="
-        project_id_condition.value = str(project_id)
-
-        pagination: SearchRequestPagination = SearchRequestPagination()
-        pagination.page = 0
-        pagination.size = 1
-        pagination.sorts = []
-
-        search_request: SearchRequest = SearchRequest()
-        search_request.type = "CheckpointPixel"
-        search_request.conditions = [
-            checkpoint_id_condition,
-            project_id_condition
-        ]
-        search_request.pagination = pagination
-        return api.search(search_request)
+    def get_checkpoint_pixel_by_checkpoint_id(self, checkpoint_id):
+        api = VisualTestingApi(self.api_client)
+        return api.get_checkpoint_pixel_by_checkpoint_id(checkpoint_id)

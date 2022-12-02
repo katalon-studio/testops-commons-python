@@ -9,6 +9,7 @@ test/helper/result.json
 testops-report
 
 .venv
+env
 
 # MacOS
 .DS_Store

@@ -122,12 +122,10 @@ class VisualTestingUploader:
 
     def __get_vst_result(self, checkpoint_id: int) -> CheckpointPixel:
         try:
-            checkpoint_pixels_search_result = self.testops_connector.search_checkpoint_pixels(project_id=self.configuration.project_id, checkpoint_id=checkpoint_id)
-            checkpoint_results: list = checkpoint_pixels_search_result.content
-            if len(checkpoint_results) == 0:
+            checkpoint_pixel = self.testops_connector.get_checkpoint_pixel_by_checkpoint_id(checkpoint_id=checkpoint_id)
+            if checkpoint_pixel == None:
                 return CheckpointPixel(None, None)
 
-            checkpoint_pixel: dict = checkpoint_results.pop()
             checkpoint: dict = checkpoint_pixel["checkpoint"]
             checkpoint_name = checkpoint["screenshot"]["name"]
             checkpoint_status = checkpoint.get("matchStatus", None)
