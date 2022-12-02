@@ -41,4 +41,4 @@ def __scan_dir(paths: list, directory: Path):
 
 
 def __is_report_file(file: str) -> bool:
-    return re.match(constants.REPORT_PATTERN, file)
+    return re.match(constants.REPORT_PATTERN, file, re.IGNORECASE)
