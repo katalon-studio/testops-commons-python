@@ -113,7 +113,8 @@ class VisualTestingUploader:
             upload_checkpoint_resource.batch = helper.generate_upload_batch()
             upload_checkpoint_resource.file_name = name
             upload_checkpoint_resource.uploaded_path = path
-            upload_checkpoint_resource.baseline_collection_id = self.configuration.baseline_collection_id
+            if self.configuration.baseline_collection_id != -1:
+                upload_checkpoint_resource.baseline_collection_id = self.configuration.baseline_collection_id
             return self.testops_connector.upload_checkpoint(upload_checkpoint_resource).id
         except Exception as e:
             self.__logger.error(__name__ + " Error.")
@@ -128,7 +129,7 @@ class VisualTestingUploader:
 
             checkpoint: dict = checkpoint_pixel["checkpoint"]
             checkpoint_name = checkpoint["screenshot"]["name"]
-            checkpoint_status = checkpoint.get("matchStatus", None)
+            checkpoint_status = checkpoint.get("match_status", None)
             return CheckpointPixel(checkpoint_name, checkpoint_status)
         except Exception as e:
             self.__logger.error(__name__ + " Error.")

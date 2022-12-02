@@ -107,10 +107,14 @@ class TestOpsConfigurationCreator:
             TESTOPS_BUILD_URL,
             env_name=TESTOPS_BUILD_URL_ENV)
 
-        baseline_collection_id = self.conf.get_config(
+        baseline_collection_id_str = self.conf.get_config(
             TESTOPS_BASELINE_COLLECTION_ID,
             env_name=TESTOPS_BASELINE_COLLECTION_ID_ENV
         )
+        baseline_collection_id = -1
+        if not is_blank(baseline_collection_id_str):
+            baseline_collection_id = int(baseline_collection_id_str)
+        
 
         proxy_information = self.create_proxy_information()
 
