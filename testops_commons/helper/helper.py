@@ -1,4 +1,8 @@
 import json
+import logging
+import sys
+from logging import Logger, StreamHandler
+
 import jsonpickle
 import platform
 import socket
@@ -13,6 +17,9 @@ from uuid import uuid4
 
 CONFIG_FILE = 'testops-config.json'
 jsonpickle.set_encoder_options('json', sort_keys=True, indent=2)
+
+
+DEFAULT_CONSOLE_LOG_OUTPUT = StreamHandler(sys.stdout)
 
 
 def generate_unique_value() -> str:
@@ -58,6 +65,13 @@ def get_api_auth_headers(api_key: str) -> dict:
         "Authorization": "Basic "
         + encode_base64(":" + api_key),
     }
+
+def get_logger(name) -> Logger:
+    logger = logging.getLogger()
+    logger.setLevel(logging.DEBUG)
+    logger.addHandler(DEFAULT_CONSOLE_LOG_OUTPUT)
+    return logger
+
 
 class FrozenJSON:
     def __init__(self, mapping):

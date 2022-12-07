@@ -21,6 +21,12 @@ class ReportGenerator:
     def write_metadata(self, metadata: Metadata):
         pass
 
+    def write_global_execution_uuid(self, uuid):
+        pass
+
+    def clean_report_dir(self):
+        pass
+
 
 class TestOpsReportGenerator(ReportGenerator):
 
@@ -34,8 +40,6 @@ class TestOpsReportGenerator(ReportGenerator):
         if self.is_parallel:
             report_path = path.join(configuration.report_folder, helper.current_thread_name())
         self.output_directory = report_path
-        file_helper.ensure_directory(self.output_directory)
-        pass
 
     def clean_report_dir(self):
         file_helper.clean_dir(self.configuration.report_folder)
@@ -72,10 +76,14 @@ class TestOpsReportGenerator(ReportGenerator):
         self.write_to_file(metadata, 'metadata' + constants.REPORT_FILE_EXTENSION)
 
     def write_global_execution_uuid(self, uuid):
+        if not Path(self.configuration.report_folder).exists():
+            file_helper.ensure_directory(self.configuration.report_folder)
         with open(path.join(self.configuration.report_folder, "execution.uuid"), "w") as f:
             f.write(uuid)
 
     def write_to_file(self, data, file_name: str):
+        if not Path(self.output_directory).exists():
+            file_helper.ensure_directory(self.output_directory)
         helper.write_json(data, path.join(self.output_directory, file_name))
 
     def get_master_execution_uuid(self) -> str:
