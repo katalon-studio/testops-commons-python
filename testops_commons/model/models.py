@@ -1,3 +1,6 @@
+from dataclasses import dataclass
+
+
 STRING_EMPTY: str = ''
 
 
@@ -84,3 +87,45 @@ class TestSuites:
 class TestResults:
     def __init__(self, test_results: list):
         self.results = test_results
+
+class TestOpsException(Exception):
+    ...
+
+class VisualTestingCheckpointMismatchException(TestOpsException):
+    ...
+
+class VisualTestingTimeoutException(TestOpsException):
+    ...
+
+@dataclass
+class RequestMethod:
+    GET: str = "GET"
+    POST: str = "POST"
+    PUT: str = "PUT"
+
+
+@dataclass
+class Apis:
+    GET_UPLOAD_URL: str = "/api/v1/files/upload-url"
+    UPLOAD_CHECKPOINT: str = "/api/v1/checkpoints"
+    SEARCH: str = "/api/v1/search"
+    UPDATE_RUNNING_TEST_RUN: str = '/api/v1/katalon/test-reports/update-result?projectId={project_id}'
+
+
+@dataclass
+class CheckpointMatchStatus:
+    NEW = "NEW"
+    MISMATCH = "MISMATCH"
+    MATCH = "MATCH"
+    MISSING = "MISSING"
+
+class UploadInfo:
+    def __init__(self, path: str, upload_url) -> None:
+        self.path = path
+        self.upload_url = upload_url
+
+
+class CheckpointPixel:
+    def __init__(self, name: str, matchStatus: str) -> None:
+        self.name = name
+        self.matchStatus = matchStatus

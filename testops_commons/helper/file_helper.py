@@ -4,6 +4,7 @@ from pathlib import Path
 import re
 
 from testops_commons.core import constants
+from os.path import basename
 
 
 def ensure_directory(directory: Path):
@@ -26,6 +27,10 @@ def clean_dir(path):
     shutil.rmtree(p)
 
 
+def get_file_name(path: str) -> str:
+    return basename(path)
+
+
 def __scan_dir(paths: list, directory: Path):
     for (dir_path, dir_names, file_names) in walk(directory):
         for f in file_names:
@@ -36,4 +41,4 @@ def __scan_dir(paths: list, directory: Path):
 
 
 def __is_report_file(file: str) -> bool:
-    return re.match(constants.REPORT_PATTERN, file)
+    return re.match(constants.REPORT_PATTERN, file, re.IGNORECASE)

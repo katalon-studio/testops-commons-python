@@ -136,16 +136,23 @@ class ReportLifecycle:
         self.logger.info(jsonpickle.encode(_get_config_for_log(self.config), unpicklable=False))
         self.report_uploader.upload()
 
-    def reset(self):
+    def reset(self, clean_report=False):
         self.current_execution = None
         self.report_storage.clear()
         self.test_results.clear()
         self.test_suites.clear()
         self.test_results = None
         self.test_suites = None
+        if clean_report:
+            self.report_generator.clean_report_dir()
 
-    def clean_report_dir(self):
-        self.report_generator.clean_report_dir()
+
+def _get_config_for_log(config):
+    config_copy = copy(config)
+    config_copy.api_key = "*"
+    config_copy.__dict__.pop("is_parallel")
+    config_copy.report_folder = config_copy.report_folder.name
+    return config_copy
 
 
 def _get_config_for_log(config):

@@ -26,7 +26,8 @@ class Configuration:
                  report_folder: str,
                  build_label: str,
                  build_url: str,
-                 proxy_information: ProxyInformation):
+                 proxy_information: ProxyInformation,
+                 baseline_collection_id: int = None):
         self.server_url = server_url
         self.api_key = api_key
         self.project_id = project_id
@@ -34,6 +35,7 @@ class Configuration:
         self.build_url = build_url
         self.build_label = build_label
         self.proxy_information = proxy_information
+        self.baseline_collection_id = baseline_collection_id
 
 
 class TestOpsConfigurationCreator:
@@ -105,6 +107,15 @@ class TestOpsConfigurationCreator:
             TESTOPS_BUILD_URL,
             env_name=TESTOPS_BUILD_URL_ENV)
 
+        baseline_collection_id_str = self.conf.get_config(
+            TESTOPS_BASELINE_COLLECTION_ID,
+            env_name=TESTOPS_BASELINE_COLLECTION_ID_ENV
+        )
+        baseline_collection_id = -1
+        if not is_blank(baseline_collection_id_str):
+            baseline_collection_id = int(baseline_collection_id_str)
+        
+
         proxy_information = self.create_proxy_information()
 
         return Configuration(server_url=server_url,
@@ -113,4 +124,5 @@ class TestOpsConfigurationCreator:
                              report_folder=report_folder,
                              build_label=build_label,
                              build_url=build_url,
-                             proxy_information=proxy_information)
+                             proxy_information=proxy_information,
+                             baseline_collection_id=baseline_collection_id)
