@@ -5,13 +5,13 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 REQUIRES=[
     "requests",
-    "testops-api",
+    "testops-api>=1.0.2",
     "jsonpickle"
 ]
 
 setuptools.setup(
     name="testops-commons",
-    version="1.0.1",
+    version="1.0.5",
     author="Katalon, LLC. (https://www.katalon.com)",
     author_email="info@katalon.io",
     description="TestOps Commons Python",
